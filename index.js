@@ -25,6 +25,44 @@ app.get("/api/hello", function (req, res) {
 });
 
 
+app.get('/api/:date?', (req, res) => {
+
+  const date = req.params.date;
+  let dateObject;
+
+   //if there is an undefined or empty date parameter
+
+   
+   if (!date || typeof date === 'undefined' || date === "") {
+      const now = new Date()
+       return res.json({
+           unix: now.getTime(),
+           utc: now.toUTCString()
+       })
+   }
+
+  //Checking if the input is a timestamp or datestring
+  if (!isNaN(date)) { // if input is a timestamp
+      dateObject = new Date(parseInt(date))
+  }else
+
+  //convert the date to date object by parsing the string
+  dateObject = new Date(date);
+
+  //use the date obect for conversion
+  if (isNaN(dateObject.getTime())) { //checking if it is a valid date
+      return res.json({ error: "Invalid Date"})
+  } 
+  
+  res.json({ 
+      unix: dateObject.getTime(),
+      utc: dateObject.toUTCString()
+  }) 
+  
+});
+
+
+
 
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
